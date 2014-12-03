@@ -1,0 +1,69 @@
+#include <iostream>
+#include <vector>
+#include <stdlib.h>
+#include "kokhonen.hpp"
+using namespace std;
+
+double Kokhonen::scalar(vector<double> v1, vector<double> v2)
+{
+  if(v1.size() != v2.size())
+  {
+    cerr << "Vectors must be the same size";
+    exit(0);
+  }
+  double res = 0;
+  for(int i = 0; i < v1.size(); ++i)
+    res += v1[i] * v2[i];
+  return res;
+}
+
+void Kokhonen::load(istream &in)
+{
+  in >> outs >> ins;
+  net.resize(outs);
+  for(int i = 0; i < outs; ++i)
+  {
+    net[i].resize(ins);
+    for(int j = 0; j < ins; ++j)
+    {
+      in >> net[i][j];
+    }
+  }
+}
+
+void Kokhonen::save(ostream &out)
+{
+  out.precision(10);
+  out << outs << " ";
+  out << ins << "\n";
+  for(int i = 0; i < outs; ++i)
+  {
+    for(int j = 0; j < net[i].size(); ++j)
+    {
+      out << net[i][j] << " ";
+    }
+    out << "\n";
+  }
+}
+
+vector<double> Kokhonen::calc(vector<double> v)
+{
+  vector<double> res(net.size());
+  for(int i = 0; i < net.size(); ++i)
+    res[i] = scalar(net[i], v);
+  return res;
+}
+
+int Kokhonen::res(vector<double> v)
+{
+  vector<double> dat = calc(v);
+  int imax = 0;
+  for(int i = 0; i < dat.size(); ++i)
+    if(dat[i] >= dat[imax])
+      imax = i;
+  return imax;  
+}
+
+void Kokhonen::teach(vector< vector<double> > dat, int outs)
+{
+}
