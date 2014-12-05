@@ -50,7 +50,7 @@ vector<double> Kokhonen::calc(vector<double> v)
 {
   vector<double> res(net.size());
   for(int i = 0; i < net.size(); ++i)
-    res[i] = scalar(net[i], v);
+    res[i] = scalar(net[i], v) * 2 - scalar(net[i], net[i]);
   return res;
 }
 
