@@ -37,5 +37,20 @@ int main()
       for(int i = 0; i < res.size(); ++i)
         cout << res[i] << "\n";
     }
+    if(c == 'n')
+    {
+      string f;
+      int outs;
+      cin >> f >> outs;
+      ifstream in(f.c_str());
+      k.create(in, outs);
+    }
+    if(c == 't')
+    {
+      string f;
+      cin >> f;
+      ifstream in(f.c_str());
+      k.teach(in);
+    }
   }
 }

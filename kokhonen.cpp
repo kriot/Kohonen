@@ -64,6 +64,25 @@ int Kokhonen::res(vector<double> v)
   return imax;  
 }
 
-void Kokhonen::teach(vector< vector<double> > dat, int outs)
+void Kokhonen::create(istream &dat, int _outs)
+{
+  outs = _outs;
+  int ldat;
+  vector<double> field;
+  dat >> ldat >> ins;
+  for(int i = 0; i < ins; i++)
+    dat >> field[i];
+  net.clear();
+  net.resize(outs);
+  for(int i = 0; i < outs; ++i)
+  {
+    for(int j = 0; j < ins; ++j)
+    {
+      net[i][j] = (rand()*field[j])/RAND_MAX;
+    }
+  }
+}
+
+void Kokhonen::teach(istream &dat)
 {
 }
