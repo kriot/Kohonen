@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 using namespace std;
-class Kokhonen
+class Kohonen
 {
 public:
   int ins, outs;

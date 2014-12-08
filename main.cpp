@@ -2,11 +2,11 @@
 #include <fstream>
 #include <vector>
 #include <string>
-#include "kokhonen.hpp"
+#include "kohonen.hpp"
 
 int main()
 {
-  Kokhonen k;
+  Kohonen k;
   char c;
   while(true)
   {

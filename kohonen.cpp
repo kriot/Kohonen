@@ -1,10 +1,10 @@
 #include <iostream>
 #include <vector>
 #include <stdlib.h>
-#include "kokhonen.hpp"
+#include "kohonen.hpp"
 using namespace std;
 
-double Kokhonen::scalar(vector<double> v1, vector<double> v2)
+double Kohonen::scalar(vector<double> v1, vector<double> v2)
 {
   if(v1.size() != v2.size())
   {
@@ -17,7 +17,7 @@ double Kokhonen::scalar(vector<double> v1, vector<double> v2)
   return res;
 }
 
-void Kokhonen::load(istream &in)
+void Kohonen::load(istream &in)
 {
   in >> outs >> ins;
   net.resize(outs);
@@ -31,7 +31,7 @@ void Kokhonen::load(istream &in)
   }
 }
 
-void Kokhonen::save(ostream &out)
+void Kohonen::save(ostream &out)
 {
   out.precision(10);
   out << outs << " ";
@@ -46,7 +46,7 @@ void Kokhonen::save(ostream &out)
   }
 }
 
-vector<double> Kokhonen::calc(vector<double> v)
+vector<double> Kohonen::calc(vector<double> v)
 {
   vector<double> res(net.size());
   for(int i = 0; i < net.size(); ++i)
@@ -54,7 +54,7 @@ vector<double> Kokhonen::calc(vector<double> v)
   return res;
 }
 
-int Kokhonen::res(vector<double> v)
+int Kohonen::res(vector<double> v)
 {
   vector<double> dat = calc(v);
   int imax = 0;
@@ -64,7 +64,7 @@ int Kokhonen::res(vector<double> v)
   return imax;  
 }
 
-void Kokhonen::create(istream &dat, int _outs)
+void Kohonen::create(istream &dat, int _outs)
 {
   outs = _outs;
   int ldat;
@@ -83,6 +83,6 @@ void Kokhonen::create(istream &dat, int _outs)
   }
 }
 
-void Kokhonen::teach(istream &dat)
+void Kohonen::teach(istream &dat)
 {
 }
