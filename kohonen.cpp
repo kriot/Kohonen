@@ -68,14 +68,15 @@ void Kohonen::create(istream &dat, int _outs)
 {
   outs = _outs;
   int ldat;
-  vector<double> field;
   dat >> ldat >> ins;
+  vector<double> field(ins);
   for(int i = 0; i < ins; i++)
     dat >> field[i];
   net.clear();
   net.resize(outs);
   for(int i = 0; i < outs; ++i)
   {
+    net[i].resize(ins);
     for(int j = 0; j < ins; ++j)
     {
       net[i][j] = (rand()*field[j])/RAND_MAX;
