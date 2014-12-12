@@ -25,7 +25,10 @@ int main(int argc, char* argv[])
       }
     }
     if(dim == 1)
-      g.plot_x(dat[0]);
+    {
+      vector<double> zero(n,0);
+      g.plot_xy(dat[0], zero);
+    }
     else if(dim == 2)
       g.plot_xy(dat[0],dat[1]);
     else if(dim == 3)
