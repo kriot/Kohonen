@@ -59,5 +59,7 @@ It requires in instream:
 ```
 round_point
 range_value
-number of point you want
+number of points you want
 ```
+
+The out is an dat file with points.
