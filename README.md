@@ -69,3 +69,8 @@ It unite two .dat files to up a dimention.
 ```
 ./up_dim file1.dat file2.dat > file_out.dat
 ```
+#Unite tool
+It untites sets of points.
+```
+./unite file1.dat file2.dat > file_out.dat
+```

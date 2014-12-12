@@ -23,3 +23,6 @@ points_round: points_round.cpp
 
 up_dim: up_dim.cpp
 	g++ -o up_dim up_dim.cpp
+	
+unite: unite.cpp
+	g++ -o unite unite.cpp
