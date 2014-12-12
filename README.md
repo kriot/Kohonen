@@ -8,6 +8,7 @@ It's simply realization of kohonen network.
  * Create rindomized kohonen network in custumized field
  * Teach network (self organized map) without teacher
  * Teach network to hardset-classsification (teaching with teacher, it's able to continue it without teacher)
+ * Vizualization tool
 
 ##File types
 This interface uses two types of files.
@@ -33,3 +34,22 @@ This file (`*.teach`) contains information about set of data for teaching and in
 ...
 (in-vector of sample)
 ```
+
+###Data file
+This file contains array of vector.
+```
+(number of vectors) (dimentional)
+(vector1)
+...
+(vectorN)
+```
+
+#Vizualization tool
+This tool is using for vizualzation array of vectors. 
+
+In console:
+```
+vizualaze file1.dat file2.dat
+```
+
+The tool *reuqeures the gnuplot*.
