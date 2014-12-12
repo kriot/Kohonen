@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <stdlib.h>
+#include <math.h>
 #include "kohonen.hpp"
 using namespace std;
 
@@ -86,4 +87,50 @@ void Kohonen::create(istream &dat, int _outs)
 
 void Kohonen::teach(istream &dat)
 {
+  int dsize;
+  int dins;
+  dat >> dsize >> dins;
+  if(dins != ins) 
+  {
+    cerr << "Data ins and network ins must be the same\n";
+    return;
+  }
+  for(int j = 0; j < ins; ++j)
+  {
+    double tmp;
+    dat >> tmp;
+  }
+  vector<vector< double> > data(dsize);
+  for(int i = 0; i < data.size(); ++i)
+  {
+    data[i].resize(ins);
+    for(int j = 0; j < ins; ++j)
+    {
+      dat >> data[i][j];
+    }
+  }
+  double step = 1.0;
+  int sh = 9999983 % data.size(); //shuffler
+  double cov = 0.5;
+  vector<vector <double> > newnet = net;
+  for(int k = 0; k < 100000; ++k)
+  {
+    for(int i = 0; i < dsize; ++i)
+    {
+      int cur = (i*sh) % dsize;
+      cout << "cur=" << cur <<"\n";
+      for(int j = 0; j < outs; ++j)
+      {
+        double dist = 0;
+        for(int l = 0; l < ins; ++l)
+          dist += pow((net[j][l] - data[cur][l]),2);
+        double a = cov/(cov + dist)/(k+1);
+        cout << "a="<< a <<"\n";
+        for(int l = 0; l < ins; ++l)
+          newnet[j][l] = net[j][l] + a*(data[cur][l] - net[j][l]); 
+      }
+    }
+    net = newnet;
+    step = exp(-((double)k)/10000);
+  }
 }
