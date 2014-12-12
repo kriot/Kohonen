@@ -20,3 +20,6 @@ visualize.o: visualize.cpp
 
 points_round: points_round.cpp
 	g++ -o points_round points_round.cpp
+
+up_dim: up_dim.cpp
+	g++ -o up_dim up_dim.cpp

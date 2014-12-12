@@ -63,3 +63,9 @@ number of points you want
 ```
 
 The out is an dat file with points.
+
+#Up dimentional tool
+It unite two .dat files to up a dimention.
+```
+./up_dim file1.dat file2.dat > file_out.dat
+```
