@@ -53,3 +53,11 @@ vizualaze file1.dat file2.dat
 ```
 
 The tool *reuqeures the gnuplot*.
+
+#Points round tool
+It requires in instream: 
+```
+round_point
+range_value
+number of point you want
+```

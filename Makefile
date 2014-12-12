@@ -17,3 +17,6 @@ visual: visualize.o
 
 visualize.o: visualize.cpp
 	g++ -c visualize.cpp
+
+points_round: points_round.cpp
+	g++ -o points_round points_round.cpp
