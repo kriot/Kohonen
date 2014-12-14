@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <stdlib.h>
 #include <math.h>
@@ -109,25 +110,41 @@ void Kohonen::teach(istream &dat)
       dat >> data[i][j];
     }
   }
-  double step = 1.0;
+
+  double step;
   double cov = 0.5;
   vector<vector <double> > newnet = net;
+  vector<double> a(outs);
+  vector<double> dist(outs);
 
+  ofstream logger("out.log");
+  
   for(int k = 0; k < 100000; ++k)
   {
+    step = 1.0/(log(k+10)+10);
+    logger <<"step = "<< step << "\n";
     for(int i = 0; i < dsize; ++i)
     {
       for(int j = 0; j < outs; ++j)
       {
-        double dist = 0;
+        dist[j] = 0;
         for(int l = 0; l < ins; ++l)
-          dist += pow((net[j][l] - data[i][l]),2);
-        double a = cov/(cov + dist);
-        for(int l = 0; l < ins; ++l)
-          newnet[j][l] += a*(data[i][l] - net[j][l]); 
+          dist[j] += pow((net[j][l] - data[i][l]),2);
       }
+
+      int closest = 0;
+      for(int j = 0; j < outs; ++j)
+        if(dist[j] < dist[closest]) closest = j;
+
+      for(int j = 0; j < outs; ++j)
+        a[j] = step * cov / (cov + dist[j] - dist[closest]) ;
+
+      for(int j = 0; j < outs; ++j)
+        for(int l = 0; l < ins; ++l)
+          newnet[j][l] += a[j]*(data[i][l] - net[j][l]); 
     }
     net = newnet;
-    step = exp(-((double)k)/10000);
   }
+
+  logger.close();
 }
