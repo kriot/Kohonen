@@ -110,22 +110,21 @@ void Kohonen::teach(istream &dat)
     }
   }
   double step = 1.0;
-  int sh = 9999983 % data.size(); //shuffler
   double cov = 0.5;
   vector<vector <double> > newnet = net;
+
   for(int k = 0; k < 100000; ++k)
   {
     for(int i = 0; i < dsize; ++i)
     {
-      int cur = (i*sh) % dsize;
       for(int j = 0; j < outs; ++j)
       {
         double dist = 0;
         for(int l = 0; l < ins; ++l)
-          dist += pow((net[j][l] - data[cur][l]),2);
-        double a = cov/(cov + dist)/(k+1);
+          dist += pow((net[j][l] - data[i][l]),2);
+        double a = cov/(cov + dist);
         for(int l = 0; l < ins; ++l)
-          newnet[j][l] = net[j][l] + a*(data[cur][l] - net[j][l]); 
+          newnet[j][l] += a*(data[i][l] - net[j][l]); 
       }
     }
     net = newnet;
