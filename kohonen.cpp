@@ -122,6 +122,7 @@ void Kohonen::teach(istream &dat)
   for(int k = 0; k < 100000; ++k)
   {
     step = 1.0/(pow(k+10, 0.6)+10);
+    cov = 0.003 + 1.0/(k+1);
     logger <<"step = "<< step << "\n";
     for(int i = 0; i < dsize; ++i)
     {
