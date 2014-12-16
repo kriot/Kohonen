@@ -18,9 +18,9 @@ This file (`*.net`) contains the information about network. It's all you need to
 
 ```
 (number of outs) (number of ins)
-(vector of the 1st out. The size is equal to number of ins)
+(int class_of_neuron) (vector of the 1st out. The size is equal to number of ins)
 ...
-(vector of the Nth out)
+(int class_of_neuron) (vector of the Nth out)
 ```
 
 ###Teach file
@@ -30,9 +30,9 @@ This file (`*.teach`) contains information about set of data for teaching and in
 ```
 (volume of data) (nuber of ins)
 (vector of max values for each cord. It sets field)
-(in-vector of sample)
+(int class_of_neuron) (in-vector of sample)
 ...
-(in-vector of sample)
+(int class_of_neuron) (in-vector of sample)
 ```
 
 ###Data file

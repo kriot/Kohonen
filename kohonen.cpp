@@ -25,10 +25,11 @@ void Kohonen::load(istream &in)
   net.resize(outs);
   for(int i = 0; i < outs; ++i)
   {
-    net[i].resize(ins);
+    net[i].w.resize(ins);
+    in >> net[i].c;
     for(int j = 0; j < ins; ++j)
     {
-      in >> net[i][j];
+      in >> net[i].w[j];
     }
   }
 }
@@ -40,9 +41,10 @@ void Kohonen::save(ostream &out)
   out << ins << "\n";
   for(int i = 0; i < outs; ++i)
   {
-    for(int j = 0; j < net[i].size(); ++j)
+    out << net[i].c << " ";
+    for(int j = 0; j < net[i].w.size(); ++j)
     {
-      out << net[i][j] << " ";
+      out << net[i].w[j] << " ";
     }
     out << "\n";
   }
@@ -52,7 +54,7 @@ vector<double> Kohonen::calc(vector<double> v)
 {
   vector<double> res(net.size());
   for(int i = 0; i < net.size(); ++i)
-    res[i] = scalar(net[i], v) * 2 - scalar(net[i], net[i]);
+    res[i] = scalar(net[i].w, v) * 2 - scalar(net[i].w, net[i].w);
   return res;
 }
 
@@ -63,7 +65,7 @@ int Kohonen::res(vector<double> v)
   for(int i = 0; i < dat.size(); ++i)
     if(dat[i] >= dat[imax])
       imax = i;
-  return imax;  
+  return net[imax].c;  
 }
 
 void Kohonen::create(istream &dat, int _outs)
@@ -78,10 +80,11 @@ void Kohonen::create(istream &dat, int _outs)
   net.resize(outs);
   for(int i = 0; i < outs; ++i)
   {
-    net[i].resize(ins);
+    net[i].w.resize(ins);
+    net[i].c = -1;
     for(int j = 0; j < ins; ++j)
     {
-      net[i][j] = (rand()*field[j])/RAND_MAX;
+      net[i].w[j] = (rand()*field[j])/RAND_MAX;
     }
   }
 }
@@ -102,9 +105,11 @@ void Kohonen::teach(istream &dat)
     dat >> tmp;
   }
   vector<vector< double> > data(dsize);
+  vector<int> types(dsize);
   for(int i = 0; i < data.size(); ++i)
   {
     data[i].resize(ins);
+    dat >> types[i];
     for(int j = 0; j < ins; ++j)
     {
       dat >> data[i][j];
@@ -113,13 +118,13 @@ void Kohonen::teach(istream &dat)
 
   double step;
   double cov = 0.5;
-  vector<vector <double> > newnet = net;
+  vector<neuron> newnet = net;
   vector<double> a(outs);
   vector<double> dist(outs);
 
   ofstream logger("out.log");
   
-  for(int k = 0; k < 100000; ++k)
+  for(int k = 0; k < 10000; ++k)
   {
     step = 1.0/(pow(k+10, 0.6)+10);
     cov = 0.003 + 1.0/(k+1);
@@ -130,7 +135,7 @@ void Kohonen::teach(istream &dat)
       {
         dist[j] = 0;
         for(int l = 0; l < ins; ++l)
-          dist[j] += pow((net[j][l] - data[i][l]),2);
+          dist[j] += pow((net[j].w[l] - data[i][l]),2);
       }
 
       int closest = 0;
@@ -138,11 +143,11 @@ void Kohonen::teach(istream &dat)
         if(dist[j] < dist[closest]) closest = j;
 
       for(int j = 0; j < outs; ++j)
-        a[j] = step * cov / (cov + dist[j] - dist[closest]) ;
+        a[j] = (net[j].c == types[j] ? 1 : -1) * step * cov / (cov + dist[j] - dist[closest]) ;
 
       for(int j = 0; j < outs; ++j)
         for(int l = 0; l < ins; ++l)
-          newnet[j][l] += a[j]*(data[i][l] - net[j][l]); 
+          newnet[j].w[l] += a[j]*(data[i][l] - net[j].w[l]); 
     }
     net = newnet;
   }
