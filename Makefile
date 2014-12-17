@@ -1,13 +1,15 @@
 all: project
 
-project: main.o kohonen.o
-	g++ main.o kohonen.o -o main
+project: main
+
+main: main.o kohonen.o
+	g++ -g main.o kohonen.o -o main
 
 main.o: main.cpp
-	g++ -c main.cpp
+	g++ -g -c main.cpp
 
 kohonen.o: kohonen.cpp
-	g++ -c kohonen.cpp
+	g++ -g -c kohonen.cpp
 
 clean:
 	rm *.o main visual

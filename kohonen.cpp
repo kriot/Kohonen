@@ -143,7 +143,10 @@ void Kohonen::teach(istream &dat)
         if(dist[j] < dist[closest]) closest = j;
 
       for(int j = 0; j < outs; ++j)
-        a[j] = (net[j].c == types[j] ? 1 : -1) * step * cov / (cov + dist[j] - dist[closest]) ;
+      {
+        a[j] = (net[j].c == types[i] ? 1 : -1.0/outs) * step * cov / (cov + dist[j] - dist[closest]) ;
+        logger << types[i] << " " << net[j].c << "; a[" << j << "] = " << a[j] << "\n";
+      }
 
       for(int j = 0; j < outs; ++j)
         for(int l = 0; l < ins; ++l)
@@ -153,4 +156,50 @@ void Kohonen::teach(istream &dat)
   }
 
   logger.close();
+}
+
+void Kohonen::set_classes(istream& dat)
+{
+  int dsize;
+  int dins;
+  dat >> dsize >> dins;
+  if(dins != ins) 
+  {
+    cerr << "Data ins and network ins must be the same\n";
+    return;
+  }
+  for(int j = 0; j < ins; ++j)
+  {
+    double tmp;
+    dat >> tmp;
+  }
+  vector<vector< double> > data(dsize);
+  vector<int> types(dsize);
+  for(int i = 0; i < data.size(); ++i)
+  {
+    data[i].resize(ins);
+    dat >> types[i];
+    for(int j = 0; j < ins; ++j)
+    {
+      dat >> data[i][j];
+    }
+  }
+
+  for(int j = 0; j < outs; ++j)
+  {
+    int closest = -1;
+    double dist = 1e100;
+    for(int i = 0; i < dsize; ++i)
+    {
+      double d = 0;
+      for(int l = 0; l < ins; ++l)
+        d += pow((net[j].w[l] - data[i][l]),2);
+      if( d <= dist )
+      {
+        closest = i;
+        dist = d;
+      }
+    }
+    net[j].c = types[closest];
+  }
 }

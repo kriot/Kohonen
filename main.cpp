@@ -52,5 +52,13 @@ int main()
       ifstream in(f.c_str());
       k.teach(in);
     }
+    if(c == 'u')
+    {
+      string f;
+      cin >> f;
+      ifstream in(f.c_str());
+      k.set_classes(in);
+      cout << "OK\n";
+    }
   }
 }
