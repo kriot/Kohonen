@@ -1,3 +1,4 @@
+var RecResolution = 100;
 $(document).ready(function(){
 	$("#send").click(function(){
     PrepareImage();
@@ -53,8 +54,33 @@ function PrepareImage()
     }
   }
   //cut image
-  img = ctx.getImageData(left, top, right-left, bottom-top);
-  ctx.putImageData(img, 0, 0);
+  var wc = right-left;
+  var hc = bottom-top;
+  img = ctx.getImageData(left, top, wc, hc);
+  //For testing crop
+  //ctx.putImageData(img, 0, 0);
+  
+  //straching image
+  var simg = ctx.createImageData(RecResolution, RecResolution);
+  for(var i = 0; i < hc; ++i)
+  {
+    for(var j = 0; j < wc; ++j)
+    {
+      var p = i*wc*4 + j*4;
+      if(img.data[p] < 200) //plotted pixel
+      {
+        var ap = Math.floor(i*RecResolution/hc)*RecResolution*4 + Math.floor(j*RecResolution/wc)*4;
+        simg.data[ap + 0] = img.data[p + 0];
+        simg.data[ap + 1] = img.data[p + 1];
+        simg.data[ap + 2] = img.data[p + 2];
+        simg.data[ap + 3] = img.data[p + 3];
+      }
+    }
+  }
+  ctx.putImageData(simg, 0, 0);
+
+
+
 }
 
 function ResetCanvas()
