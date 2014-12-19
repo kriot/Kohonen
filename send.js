@@ -1,12 +1,6 @@
 $(document).ready(function(){
 	$("#send").click(function(){
-		$.ajax({
-			type: "POST",
-			url: "service.php",
-			data: {img: getImage()}
-		}).done(function(data){
-			$("#data").html(data);
-		});
+    PrepareImage();
 	});
 	ResetCanvas();
 });
@@ -32,6 +26,37 @@ function getImage()
 	return file;
 	
 }
+
+function PrepareImage()
+{
+	var w = $("#theCanvas").width();
+	var h = $("#theCanvas").height();
+	var ctx = document.getElementById("theCanvas").getContext("2d");
+	img = ctx.getImageData(0,0,w,h);
+  var left = w, right = 0, top = h, bottom = 0;
+  for(var i = 0; i < h; ++i)
+  {
+    for(var j = 0; j < w; ++j)
+    {
+      var p = i*w*4 + j*4;
+      if(img.data[p] < 200) //plotted pixel
+      {
+        if(i < top)
+          top = i;
+        if(i > bottom)
+          bottom = i;
+        if(j < left)
+          left = j;
+        if(j > right)
+          right = j;
+      }
+    }
+  }
+  //cut image
+  img = ctx.getImageData(left, top, right-left, bottom-top);
+  ctx.putImageData(img, 0, 0);
+}
+
 function ResetCanvas()
 {
 	var w = $("#theCanvas").width();
