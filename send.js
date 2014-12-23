@@ -109,7 +109,6 @@ function PrepareImage()
     for(var i = 1; i + 1 < RecResolution; ++i)
     {
       var min = checkPixel(j, i, 0, 0);
-      console.log("min", min);
       var t;
       if((t = checkPixel(j, i, -1, 0)) < min)
       {
@@ -138,15 +137,87 @@ function PrepareImage()
       }
     }
   }
-  var cov = 50;
+  //Back step
+  
+  //Attention! this function uses global array d/d2;
+  checkPixel = function(y, x, vy, vx)
+  {
+    if(y+vy<0 || x+vx<0 || y+vy >= RecResolution || x+vx >= RecResolution)
+      return RecResolution*RecResolution;
+    var cp = d2[y+vy][x+vx];
+    return (true ? (cp.x - vx)*(cp.x - vx) + (cp.y - vy)*(cp.y - vy) : RecResolution*RecResolution);
+  }
+
+  var d2 = []; 
+  for(var i = 0; i < RecResolution; ++i)
+  {
+    d2[i] = [];
+    for(var j = 0; j < RecResolution; ++j)
+    {
+      var p = i*RecResolution*4 + j*4;
+      if(simg.data[p+3] > 150  ) //plotted pixel
+      {
+        d2[i][j] = {x: 0, y: 0, c: 0};
+      }
+      else
+      {
+        d2[i][j] = {x: RecResolution, y: RecResolution, c: 255};
+      }
+    }
+  }
+  for(var j = RecResolution - 2; j > 0; --j)
+  {
+    for(var i = RecResolution - 2; i > 0; --i)
+    {
+      var min = checkPixel(j, i, 0, 0);
+      var t;
+      if((t = checkPixel(j, i, 1, 0)) < min)
+      {
+        min = t;
+        d2[j][i].x = d2[j+1][i].x ;
+        d2[j][i].y = d2[j+1][i].y - 1;
+      }
+      if((t = checkPixel(j, i, 1, -1)) < min)
+      {
+        min = t;
+        d2[j][i].x = d2[j+1][i-1].x + 1;
+        d2[j][i].y = d2[j+1][i-1].y - 1;
+      }
+      if((t = checkPixel(j, i, 0, 1)) < min)
+      {
+        min = t;
+        d2[j][i].x = d2[j][i+1].x - 1;
+        d2[j][i].y = d2[j][i+1].y;
+      }
+
+      if((t = checkPixel(j, i, +1, +1)) < min)
+      {
+        min = t;
+        d2[j][i].x = d2[j+1][i+1].x - 1;
+        d2[j][i].y = d2[j+1][i+1].y - 1;
+      }
+    }
+  }
+  var r = []; 
+  for(var i = 0; i < RecResolution; ++i)
+  {
+    r[i] = [];
+    for(var j = 0; j < RecResolution; ++j)
+    {
+      r[i][j] = Math.min((d[i][j].x)*(d[i][j].x) + d[i][j].y*d[i][j].y, (d2[i][j].x)*(d2[i][j].x) + d2[i][j].y*d2[i][j].y);
+      //r[i][j] = (d2[i][j].x)*(d2[i][j].x) + d2[i][j].y*d2[i][j].y
+      //r[i][j] = (d[i][j].x)*(d[i][j].x) + d[i][j].y*d[i][j].y
+    }
+  }
+
+  var cov = 150;
   var dimg = ctx.createImageData(RecResolution, RecResolution);
   for(var i = 0; i < RecResolution; ++i)
   {
     for(var j = 0; j < RecResolution; ++j)
     {
       var p = i*RecResolution*4 + j*4;
-      var c = 255 - 255*(cov/(cov+Math.sqrt((d[i][j].x)*(d[i][j].x) + d[i][j].y*d[i][j].y)));
-      console.log((d[i][j].x)*(d[i][j].x) + d[i][j].y*d[i][j].y);
+      var c = 255 - 255*(cov/(cov+Math.pow((r[i][j]), 0.7)));
       c = Math.floor(c);
       dimg.data[p + 0] = c;
       dimg.data[p + 1] = c;
