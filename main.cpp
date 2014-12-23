@@ -4,9 +4,21 @@
 #include <string>
 #include "kohonen.hpp"
 
-int main()
+int main(int argc, char* argv[])
 {
   Kohonen k;
+  if(argc > 1)
+  {
+    ifstream net(argv[1]);
+    k.load(net);
+    int dat_ins;
+    cin >> dat_ins;
+    vector<double> v(k.ins);
+    for(int i = 0; i < k.ins; ++i)
+      cin >> v[i];
+    cout << k.res(v);
+    return 0;
+  }
   char c;
   while(true)
   {
