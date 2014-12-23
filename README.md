@@ -28,11 +28,23 @@ This file (`*.net`) contains the information about network. It's all you need to
 This file (`*.teach`) contains information about set of data for teaching and information about field of in-vector (allowed values for each coordinate of in-vector)
 
 ```
+stream
 (volume of data) (nuber of ins)
 (vector of max values for each cord. It sets field)
 (int class_of_neuron) (in-vector of sample)
 ...
 (int class_of_neuron) (in-vector of sample)
+```
+
+Or
+
+```
+file
+(volume of data) (nuber of ins)
+(max val of field)
+(int class_of_neuron) (dat file of vector)
+...
+(int class_of_neuron) (dat file of vector)
 ```
 
 ###Data file

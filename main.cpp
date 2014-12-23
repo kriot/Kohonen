@@ -64,6 +64,13 @@ int main(int argc, char* argv[])
       ifstream in(f.c_str());
       k.teach(in);
     }
+    if(c == 'f')
+    {
+      string f;
+      cin >> f;
+      ifstream in(f.c_str());
+      k.teach_from_file(in);
+    }
     if(c == 'u')
     {
       string f;
