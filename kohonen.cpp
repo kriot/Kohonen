@@ -72,50 +72,51 @@ void Kohonen::create(istream &dat, int _outs)
 {
   outs = _outs;
   int ldat;
-  dat >> ldat >> ins;
-  vector<double> field(ins);
-  for(int i = 0; i < ins; i++)
-    dat >> field[i];
-  net.clear();
-  net.resize(outs);
-  for(int i = 0; i < outs; ++i)
+  string type;
+  dat >> type;
+  if(type == "stream")
   {
-    net[i].w.resize(ins);
-    net[i].c = -1;
-    for(int j = 0; j < ins; ++j)
+    dat >> ldat >> ins;
+    vector<double> field(ins);
+    for(int i = 0; i < ins; i++)
+      dat >> field[i];
+    net.clear();
+    net.resize(outs);
+    for(int i = 0; i < outs; ++i)
     {
-      net[i].w[j] = (rand()*field[j])/RAND_MAX;
+      net[i].w.resize(ins);
+      net[i].c = -1;
+      for(int j = 0; j < ins; ++j)
+      {
+        net[i].w[j] = (rand()*field[j])/RAND_MAX;
+      }
     }
+  }
+  else if(type == "file")
+  {
+    dat >> ldat >> ins;
+    double field;
+    dat >> field;
+    net.clear();
+    net.resize(outs);
+    for(int i = 0; i < outs; ++i)
+    {
+      net[i].w.resize(ins);
+      net[i].c = -1;
+      for(int j = 0; j < ins; ++j)
+      {
+        net[i].w[j] = (rand()*field)/RAND_MAX;
+      }
+    }
+  }
+  else
+  {
+    cerr << type << " is not type of theacher\n";
   }
 }
 
-void Kohonen::teach(istream &dat)
+void Kohonen::teach(vector< vector <double> > data, vector<int> types)
 {
-  int dsize;
-  int dins;
-  dat >> dsize >> dins;
-  if(dins != ins) 
-  {
-    cerr << "Data ins and network ins must be the same\n";
-    return;
-  }
-  for(int j = 0; j < ins; ++j)
-  {
-    double tmp;
-    dat >> tmp;
-  }
-  vector<vector< double> > data(dsize);
-  vector<int> types(dsize);
-  for(int i = 0; i < data.size(); ++i)
-  {
-    data[i].resize(ins);
-    dat >> types[i];
-    for(int j = 0; j < ins; ++j)
-    {
-      dat >> data[i][j];
-    }
-  }
-
   double step;
   double cov = 0.5;
   vector<neuron> newnet = net;
@@ -129,7 +130,7 @@ void Kohonen::teach(istream &dat)
     step = 1.0/(pow(k+10, 0.6)+10);
     cov = 0.003 + 1.0/(k+1);
     logger <<"step = "<< step << "\n";
-    for(int i = 0; i < dsize; ++i)
+    for(int i = 0; i < data.size(); ++i)
     {
       for(int j = 0; j < outs; ++j)
       {
@@ -158,7 +159,60 @@ void Kohonen::teach(istream &dat)
   logger.close();
 }
 
-void Kohonen::set_classes(istream& dat)
+void Kohonen::teach_from_file(istream &dat)
+{
+  int dsize;
+  int dins;
+  dat >> dsize >> dins;
+  if(dins != ins) 
+  {
+    cerr << "Data ins and network ins must be the same\n";
+    return;
+  }
+
+  {
+    double tmp;
+    dat >> tmp;
+  }
+  vector<vector< double> > data(dsize);
+  vector<int> types(dsize);
+  for(int i = 0; i < data.size(); ++i)
+  {
+    data[i].resize(ins);
+    dat >> types[i];
+    string source;
+    dat >> source;
+    ifstream s(source.c_str());
+    int size_of_s;
+    s >> size_of_s;
+    for(int j = 0; j < ins; ++j)
+    {
+      s >> data[i][j];
+    }
+    s.close();
+  }
+  teach(data, types);
+}
+
+void Kohonen::teach(istream &dat)
+{
+  string type;
+  dat >> type;
+  if(type == "file")
+  {
+    teach_from_file(dat);
+  }
+  else if(type == "stream") 
+  {
+    teach_from_stream(dat);
+  }
+  else
+  {
+    cerr << type << " is not type of theacher\n";
+  }
+}
+
+void Kohonen::teach_from_stream(istream &dat)
 {
   int dsize;
   int dins;
@@ -183,6 +237,70 @@ void Kohonen::set_classes(istream& dat)
     {
       dat >> data[i][j];
     }
+  }
+  teach(data, types);
+}
+
+void Kohonen::set_classes(istream& dat)
+{
+  string type;
+  int dsize;
+  int dins;
+  dat >> type;
+  dat >> dsize >> dins;
+
+  vector<vector< double> > data(dsize);
+  vector<int> types(dsize);
+
+  if(dins != ins) 
+  {
+    cerr << "Data ins and network ins must be the same\n";
+    return;
+  }
+  if(type == "stream")
+  {
+    for(int j = 0; j < ins; ++j)
+    {
+      double tmp;
+      dat >> tmp;
+    }
+    for(int i = 0; i < data.size(); ++i)
+    {
+      data[i].resize(ins);
+      dat >> types[i];
+      for(int j = 0; j < ins; ++j)
+      {
+        dat >> data[i][j];
+      }
+    }
+  }
+  else if(type == "file")
+  {
+    {
+      double tmp;
+      dat >> tmp;
+    }
+    for(int i = 0; i < data.size(); ++i)
+    {
+      data[i].resize(ins);
+      dat >> types[i];
+      string source;
+      dat >> source;
+      ifstream s(source.c_str());
+      int size_of_s;
+      s >> size_of_s;
+      for(int j = 0; j < ins; ++j)
+      {
+        s >> data[i][j];
+      }
+      s.close();
+    }
+    
+  }
+  else
+  {
+    cerr << type << " is not type of theacher\n";
+    return;
   }
 
   for(int j = 0; j < outs; ++j)
