@@ -118,17 +118,17 @@ void Kohonen::create(istream &dat, int _outs)
 void Kohonen::teach(vector< vector <double> > data, vector<int> types)
 {
   double step;
-  double cov = 0.5;
+  double cov;
   vector<neuron> newnet = net;
   vector<double> a(outs);
   vector<double> dist(outs);
 
   ofstream logger("out.log");
   
-  for(int k = 0; k < 10000; ++k)
+  for(int k = 0; k < 500; ++k)
   {
     step = 1.0/(pow(k+10, 0.6)+10);
-    cov = 0.003 + 1.0/(k+1);
+    cov = (0.003 + 1.0/(k+1))*5e7;
     logger <<"step = "<< step << "\n";
     for(int i = 0; i < data.size(); ++i)
     {
@@ -153,6 +153,13 @@ void Kohonen::teach(vector< vector <double> > data, vector<int> types)
         for(int l = 0; l < ins; ++l)
           newnet[j].w[l] += a[j]*(data[i][l] - net[j].w[l]); 
     }
+    double E = 0;
+    for(int j = 0; j < outs; ++j)
+    {
+      for(int l = 0; l < ins; ++l)
+        E += pow((net[j].w[l] - newnet[j].w[l]),2);
+    }
+    cout << "E = " << E << "\n";
     net = newnet;
   }
 
